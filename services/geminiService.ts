@@ -11,7 +11,13 @@ export const generateMitigations = async (riskInput: RiskInput): Promise<Mitigat
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'An unexpected server error occurred.' }));
+      console.error("Server responded with an error:", response.status, response.statusText);
+      const errorData = await response.json().catch(() => {
+        console.error("Failed to parse server response as JSON. The server might be misconfigured or down.");
+        // This is the fallback error when the server response isn't valid JSON,
+        // which can happen with 404s, 502s, etc.
+        return ({ error: 'An unexpected server error occurred.' });
+      });
       throw new Error(errorData.error || `Server responded with status: ${response.status}`);
     }
 
