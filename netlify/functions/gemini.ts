@@ -1,13 +1,7 @@
+
 import type { Handler } from '@netlify/functions';
 import { GoogleGenAI, Type } from "@google/genai";
 import type { RiskInput, MitigationResult } from '../../types';
-
-// This will be set as an environment variable in the Netlify UI.
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set in Netlify function environment.");
-}
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const responseSchema = {
     type: Type.OBJECT,
@@ -32,6 +26,17 @@ const responseSchema = {
 };
 
 export const handler: Handler = async (event) => {
+    if (!process.env.API_KEY) {
+        console.error("CRITICAL: API_KEY environment variable not set in Netlify function environment.");
+        return {
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ error: "Server configuration error. The API key is missing." }),
+        };
+    }
+    
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
