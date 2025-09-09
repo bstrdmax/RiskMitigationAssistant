@@ -71,7 +71,14 @@ export const handler: Handler = async (event) => {
             },
         });
         
-        const jsonString = response.text;
+        let jsonString = response.text.trim();
+
+        if (jsonString.startsWith("```json")) {
+            jsonString = jsonString.slice(7, -3).trim();
+        } else if (jsonString.startsWith("```")) {
+            jsonString = jsonString.slice(3, -3).trim();
+        }
+
         if (!jsonString) {
              throw new Error("API returned an empty response.");
         }
