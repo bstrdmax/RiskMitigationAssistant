@@ -1,0 +1,5 @@
+{
+  "name": "Risk Mitigation Assistant_V2",
+  "description": "An application that takes a risk description, objective, and statement to generate a control objective, control description, and suggested audit documentation using AI.",
+  "requestFramePermissions": []
+}
